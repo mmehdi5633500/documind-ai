@@ -81,3 +81,11 @@ class VectorStore:
             self.client.delete_collection(collection_name)
         except Exception:
             pass
+
+    def get_all_chunks(self, collection_name: str) -> list[str]:
+        """
+        chunks nikalo — BM25 indexing ke liye
+        """
+        collection = self.get_or_create_collection(collection_name)
+        results = collection.get()
+        return results["documents"]
