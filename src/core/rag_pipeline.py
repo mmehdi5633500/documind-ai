@@ -103,7 +103,14 @@ Context:
 
         # Naya sawaal
         messages.append({"role": "user", "content": question})
-
+        print(
+            "DEBUG KEY LENGTH:",
+            (
+                len(settings.OPENROUTER_API_KEY)
+                if settings.OPENROUTER_API_KEY
+                else "EMPTY/NONE"
+            ),
+        )
         # LLM call
         response = requests.post(
             url="https://openrouter.ai/api/v1/chat/completions",
