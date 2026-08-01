@@ -14,7 +14,7 @@ class Settings:
     OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
     # Database
-    DATABASE_URL = "sqlite:///data/documind.db"
+    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///data/documind.db")
 
     # JWT
     SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
