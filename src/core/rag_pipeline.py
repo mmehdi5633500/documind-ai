@@ -112,6 +112,8 @@ Context:
         )
 
         result = response.json()
+        print("DEBUG RESPONSE:", result)  # ← Yeh add karo
+        answer = result["choices"][0]["message"]["content"]
         answer = result["choices"][0]["message"]["content"]
         tokens = result["usage"]["total_tokens"]
 
