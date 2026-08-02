@@ -103,14 +103,6 @@ Context:
 
         # Naya sawaal
         messages.append({"role": "user", "content": question})
-        print(
-            "DEBUG KEY LENGTH:",
-            (
-                len(settings.OPENROUTER_API_KEY)
-                if settings.OPENROUTER_API_KEY
-                else "EMPTY/NONE"
-            ),
-        )
         # LLM call
         response = requests.post(
             url="https://openrouter.ai/api/v1/chat/completions",
@@ -119,7 +111,6 @@ Context:
         )
 
         result = response.json()
-        print("DEBUG RESPONSE:", result)  # ← Yeh add karo
         answer = result["choices"][0]["message"]["content"]
         answer = result["choices"][0]["message"]["content"]
         tokens = result["usage"]["total_tokens"]
