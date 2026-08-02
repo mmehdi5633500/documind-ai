@@ -3,6 +3,7 @@ from config import settings
 from src.core.document_processor import DocumentProcessor
 from src.core.embedding_generator import EmbeddingGenerator
 from src.core.vector_store import VectorStore
+from src.core.hybrid_search import HybridSearch
 
 
 class RAGPipeline:
@@ -22,6 +23,7 @@ class RAGPipeline:
         self.processor = DocumentProcessor()
         self.embedder = EmbeddingGenerator()
         self.vector_store = VectorStore()
+        self.hybrid_search = HybridSearch()
 
     # =========================
     # DOCUMENT PROCESS
@@ -64,46 +66,58 @@ class RAGPipeline:
         self, document_id: int, question: str, chat_history: list[dict] = []
     ) -> dict:
         """
-        User ke sawaal ka jawab do
-
-        1. Sawaal ko embed karo
-        2. Related chunks dhundho
-        3. LLM ko context + sawaal do
-        4. Jawab return karo
+        User ke sawaal ka jawab do — Hybrid Search se
         """
 
-        # Step 1: Sawaal embed karo
+        collection_name = f"document_{document_id}"
+
+        # ================================
+        # STEP 1 — VECTOR SEARCH
+        # ================================
         question_embedding = self.embedder.generate_single(question)
 
-        # Step 2: Related chunks dhundho
-        collection_name = f"document_{document_id}"
-        relevant_chunks = self.vector_store.search(
+        vector_chunks = self.vector_store.search(
             collection_name=collection_name,
             query_embedding=question_embedding,
-            n_results=5,
+            n_results=15,
         )
 
-        # Step 3: Context banao
+        # ================================
+        # STEP 2 — BM25 SEARCH
+        # ================================
+        all_chunks = self.vector_store.get_all_chunks(collection_name)
+        self.hybrid_search.index_chunks(all_chunks)
+
+        bm25_results = self.hybrid_search.bm25_search(query=question, top_k=15)
+
+        # ================================
+        # STEP 3 — COMBINE RESULTS
+        # ================================
+        combined_chunks = self.hybrid_search.combine_results(
+            vector_results=vector_chunks, bm25_results=bm25_results, alpha=0.5
+        )
+
+        relevant_chunks = combined_chunks[:10]
+
+        # ================================
+        # STEP 4 — LLM KO BHEJO
+        # ================================
         context = "\n\n".join(relevant_chunks)
 
-        # Step 4: LLM ko bhejo
         system_prompt = f"""You are a helpful AI assistant.
-Answer questions based ONLY on the provided context.
-If the answer is not in the context, say "I don't have enough information."
+    Answer questions based ONLY on the provided context.
+    If the answer is not in the context, say "I don't have enough information."
 
-Context:
-{context}"""
+    Context:
+    {context}"""
 
-        # Chat history + naya sawaal
         messages = [{"role": "system", "content": system_prompt}]
 
-        # Purani history add karo
-        for msg in chat_history[-6:]:  # Last 6 messages
+        for msg in chat_history[-6:]:
             messages.append({"role": msg["role"], "content": msg["content"]})
 
-        # Naya sawaal
         messages.append({"role": "user", "content": question})
-        # LLM call
+
         response = requests.post(
             url="https://openrouter.ai/api/v1/chat/completions",
             headers={"Authorization": f"Bearer {settings.OPENROUTER_API_KEY}"},
@@ -111,7 +125,6 @@ Context:
         )
 
         result = response.json()
-        answer = result["choices"][0]["message"]["content"]
         answer = result["choices"][0]["message"]["content"]
         tokens = result["usage"]["total_tokens"]
 
