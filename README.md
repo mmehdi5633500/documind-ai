@@ -8,9 +8,11 @@ conversations powered by state-of-the-art language models.
 
 ## 🌐 Live Demo
 
-**Try it live:** [https://documind-ai-production-35e0.up.railway.app/docs](https://documind-ai-production-35e0.up.railway.app/docs)
+**Try the App:** [https://your-app-name.streamlit.app](https://your-app-name.streamlit.app)
 
-Deployed on Railway with PostgreSQL for persistent storage.
+**API Documentation:** [https://documind-ai-production-35e0.up.railway.app/docs](https://documind-ai-production-35e0.up.railway.app/docs)
+
+Full-stack AI application with live frontend and backend, deployed on Streamlit Cloud and Railway with PostgreSQL for persistent storage.
 
 ---
 
