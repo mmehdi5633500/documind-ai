@@ -6,6 +6,12 @@ DocuMind AI is a production-ready backend system that enables intelligent
 document interaction. Upload any document, and engage in context-aware 
 conversations powered by state-of-the-art language models.
 
+## 🌐 Live Demo
+
+**Try it live:** [https://documind-ai-production-35e0.up.railway.app/docs](https://documind-ai-production-35e0.up.railway.app/docs)
+
+Deployed on Railway with PostgreSQL for persistent storage.
+
 ---
 
 ## Architecture Overview
@@ -49,7 +55,7 @@ conversations powered by state-of-the-art language models.
 |-------|-----------|---------|
 | API | FastAPI | High-performance REST API |
 | ORM | SQLAlchemy | Database abstraction |
-| Database | SQLite | Persistent data storage |
+| Database | SQLite (Dev) / PostgreSQL (Production) |
 | Vector DB | ChromaDB | Embedding storage and search |
 | Embeddings | Sentence Transformers | Text vectorization |
 | LLM | OpenRouter (GPT-3.5) | Response generation |
