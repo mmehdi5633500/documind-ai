@@ -8,7 +8,7 @@ conversations powered by state-of-the-art language models.
 
 ## 🌐 Live Demo
 
-**Try the App:** [https://your-app-name.streamlit.app](https://your-app-name.streamlit.app)
+**Try the App:** [https://documind-ai-app.streamlit.app](https://your-app-name.streamlit.app)
 
 **API Documentation:** [https://documind-ai-production-35e0.up.railway.app/docs](https://documind-ai-production-35e0.up.railway.app/docs)
 
